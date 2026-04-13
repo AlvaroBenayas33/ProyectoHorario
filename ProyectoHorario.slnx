@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/ProyectoHorario.API/ProyectoHorario.API.csproj" />
+    <Project Path="src/ProyectoHorario.Core/ProyectoHorario.Core.csproj" />
+    <Project Path="src/ProyectoHorario.Infrastructure/ProyectoHorario.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/ProyectoHorario.API.Tests/ProyectoHorario.API.Tests.csproj" />
+    <Project Path="tests/ProyectoHorario.Core.Tests/ProyectoHorario.Core.Tests.csproj" />
+  </Folder>
+</Solution>
