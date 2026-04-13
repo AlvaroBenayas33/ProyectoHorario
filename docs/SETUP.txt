@@ -1,0 +1,328 @@
+================================================================================
+GUIA DE PREPARACION — ProyectoHorario
+================================================================================
+
+Este documento recoge todos los pasos necesarios para preparar el entorno y el
+proyecto desde cero. Esta pensado para que cualquier persona pueda replicar la
+configuracion completa sin conocimiento previo del proyecto.
+
+================================================================================
+INDICE
+================================================================================
+
+  1. Aplicaciones a instalar
+  2. Extensiones de VS Code
+  3. Crear el repositorio en GitHub
+  4. Estructura de carpetas
+  5. Proyectos .NET
+  6. Frontend — Vue 3
+  7. Entity Framework Core y SQL Server
+  8. Verificacion final
+
+================================================================================
+1. APLICACIONES A INSTALAR
+================================================================================
+
+Antes de empezar necesitas tener instaladas las siguientes herramientas.
+El orden de instalacion no es critico, pero se recomienda seguirlo.
+
+--------------------------------------------------------------------------------
+.NET SDK
+--------------------------------------------------------------------------------
+El SDK de .NET es la herramienta principal para desarrollar, compilar y ejecutar
+aplicaciones C#. Sin el no es posible crear ni arrancar los proyectos de backend.
+
+  Version usada : 10.0.201
+  Descarga      : https://dotnet.microsoft.com/download
+
+  Verificar instalacion:
+    dotnet --version
+
+--------------------------------------------------------------------------------
+Node.js
+--------------------------------------------------------------------------------
+Node.js es el entorno de ejecucion de JavaScript necesario para trabajar con el
+frontend. Al instalarlo tambien se instala automaticamente npm, el gestor de
+paquetes que se usa para instalar las dependencias de Vue.
+
+  Version usada : 24.8.0  (npm 11.6.0)
+  Descarga      : https://nodejs.org
+
+  Verificar instalacion:
+    node --version
+    npm --version
+
+--------------------------------------------------------------------------------
+Git
+--------------------------------------------------------------------------------
+Git es el sistema de control de versiones. Permite llevar un historial de todos
+los cambios del proyecto y sincronizarlos con GitHub para que el codigo este
+siempre a salvo y accesible.
+
+  Version usada : 2.45.1
+  Descarga      : https://git-scm.com/downloads
+
+  Verificar instalacion:
+    git --version
+
+--------------------------------------------------------------------------------
+SQL Server
+--------------------------------------------------------------------------------
+Es el motor de base de datos que usa el proyecto para almacenar toda la
+informacion.
+
+  Version usada : 17.0.1000.7
+  Descarga      : https://www.microsoft.com/sql-server
+
+--------------------------------------------------------------------------------
+SQL Server Management Studio (SSMS)
+--------------------------------------------------------------------------------
+Herramienta grafica para gestionar SQL Server. Permite crear bases de datos,
+ejecutar consultas, ver tablas y administrar usuarios de forma visual sin
+necesidad de escribir comandos.
+
+  Descarga : https://aka.ms/ssmsfullsetup
+
+--------------------------------------------------------------------------------
+Visual Studio Code
+--------------------------------------------------------------------------------
+Editor de codigo ligero y potente que se usa como entorno de desarrollo
+principal. Funciona bien tanto para C# como para Vue gracias a sus extensiones.
+
+  Descarga : https://code.visualstudio.com
+
+================================================================================
+2. EXTENSIONES DE VS CODE
+================================================================================
+
+Las extensiones anaden funcionalidades al editor.
+Se instalan desde el panel de extensiones (Ctrl+Shift+X) buscando el nombre o ID.
+
+  C# Dev Kit
+    ID      : ms-dotnettools.csdevkit
+    Que hace: Autocompletado, depuracion y soporte completo para proyectos .NET
+
+  Vue - Official (Volar)
+    ID      : Vue.volar
+    Que hace: Soporte para Vue 3 con TypeScript, sintaxis y deteccion de errores
+
+  ESLint
+    ID      : dbaeumer.vscode-eslint
+    Que hace: Detecta errores y malas practicas en JavaScript y TypeScript
+
+  GitLens
+    ID      : eamodio.gitlens
+    Que hace: Muestra historial de Git en el editor (quien cambio cada linea, etc.)
+
+  SQL Server (mssql)
+    ID      : ms-mssql.mssql
+    Que hace: Conectarse a SQL Server y ejecutar consultas desde VS Code
+
+================================================================================
+3. CREAR EL REPOSITORIO EN GITHUB
+================================================================================
+
+GitHub es la plataforma donde se aloja el codigo del proyecto de forma remota.
+Tener el codigo en GitHub permite colaborar, hacer copias de seguridad y llevar
+un historial de cambios.
+
+PASO 1 — Crear el repositorio en la web
+---------------------------------------
+  1. Ir a https://github.com/new
+  2. Escribir el nombre: ProyectoHorario
+  3. Elegir visibilidad (publica o privada)
+  4. MUY IMPORTANTE: No marcar ninguna opcion adicional (sin README, sin
+     .gitignore, sin licencia). Si se marcan, GitHub crea un commit inicial
+     que puede entrar en conflicto al subir el proyecto local.
+  5. Clic en "Create repository"
+
+PASO 2 — Subir el proyecto local a GitHub
+------------------------------------------
+Desde la raiz del proyecto (horario/) ejecutar:
+
+  git init                          <- Inicializa Git en la carpeta del proyecto
+  git add .                         <- Añade todos los archivos al area de preparacion
+  git commit -m "first commit"      <- Crea el primer commit con todos los archivos
+  git branch -M main                <- Renombra la rama principal a 'main'
+  git remote add origin https://github.com/AlvaroBenayas33/ProyectoHorario.git
+  git push -u origin main           <- Sube el codigo a GitHub por primera vez
+
+Subir cambios en el dia a dia
+------------------------------
+  git add .                         <- Marca los archivos modificados
+  git commit -m "descripcion"       <- Crea un punto de guardado
+  git push                          <- Sube el commit a GitHub
+
+================================================================================
+4. ESTRUCTURA DE CARPETAS
+================================================================================
+
+El proyecto sigue Clean Architecture, que organiza el codigo en capas con
+responsabilidades bien separadas. Esto hace el proyecto mas facil de mantener.
+
+  - API          : Capa mas externa. Recibe las peticiones HTTP.
+  - Core         : Nucleo. Contiene entidades e interfaces. No depende de nadie.
+  - Infrastructure: Acceso a datos. Implementa los contratos definidos en Core.
+  - Client       : Frontend Vue. Aplicacion separada que consume la API.
+
+  horario/
+  |
+  +-- src/
+  |   +-- ProyectoHorario.API/            <- Controladores y config de ASP.NET Core
+  |   |   +-- Controllers/                   Reciben peticiones HTTP
+  |   |   +-- DTOs/                          Objetos de entrada y salida de la API
+  |   |   +-- Middleware/                    Logica transversal por peticion
+  |   |   +-- Models/                        Modelos de respuesta estandar
+  |   |   +-- Services/                      Servicios especificos de la API
+  |   |
+  |   +-- ProyectoHorario.Core/           <- Logica de negocio pura
+  |   |   +-- Entities/                      Clases del dominio (Empleado, Turno...)
+  |   |   +-- Interfaces/                    Contratos que Infrastructure implementa
+  |   |   +-- Services/                      Reglas de negocio
+  |   |
+  |   +-- ProyectoHorario.Infrastructure/ <- Acceso a datos
+  |   |   +-- Data/                          DbContext de Entity Framework
+  |   |   +-- Migrations/                    Cambios en la BD (generado automatico)
+  |   |   +-- Repositories/                  Implementacion del acceso a datos
+  |   |
+  |   +-- ProyectoHorario.Client/         <- Frontend Vue 3 + TypeScript + Vite
+  |
+  +-- tests/
+  |   +-- ProyectoHorario.API.Tests/      <- Tests de controladores
+  |   +-- ProyectoHorario.Core.Tests/     <- Tests de logica de negocio
+  |
+  +-- docs/                               <- Documentacion del proyecto
+
+================================================================================
+5. PROYECTOS .NET
+================================================================================
+
+Cada carpeta de src/ y tests/ es un proyecto .NET con su propio archivo .csproj.
+Todos se agrupan en un archivo de solucion (.slnx) para trabajar con todos a la vez.
+
+CREAR LOS PROYECTOS
+-------------------
+  dotnet new webapi -n ProyectoHorario.API -o src/ProyectoHorario.API --no-restore
+  dotnet new classlib -n ProyectoHorario.Core -o src/ProyectoHorario.Core --no-restore
+  dotnet new classlib -n ProyectoHorario.Infrastructure -o src/ProyectoHorario.Infrastructure --no-restore
+  dotnet new xunit -n ProyectoHorario.API.Tests -o tests/ProyectoHorario.API.Tests --no-restore
+  dotnet new xunit -n ProyectoHorario.Core.Tests -o tests/ProyectoHorario.Core.Tests --no-restore
+
+  Nota: --no-restore evita descargar dependencias por separado en cada comando.
+
+CREAR LA SOLUCION Y AÑADIR LOS PROYECTOS
+-----------------------------------------
+  dotnet new sln -n ProyectoHorario
+
+  dotnet sln add src/ProyectoHorario.API/ProyectoHorario.API.csproj
+  dotnet sln add src/ProyectoHorario.Core/ProyectoHorario.Core.csproj
+  dotnet sln add src/ProyectoHorario.Infrastructure/ProyectoHorario.Infrastructure.csproj
+  dotnet sln add tests/ProyectoHorario.API.Tests/ProyectoHorario.API.Tests.csproj
+  dotnet sln add tests/ProyectoHorario.Core.Tests/ProyectoHorario.Core.Tests.csproj
+
+REFERENCIAS ENTRE PROYECTOS (Clean Architecture)
+-------------------------------------------------
+  API --> Infrastructure --> Core
+   \                          ^
+    \------------------------/
+
+  dotnet add src/ProyectoHorario.API/ProyectoHorario.API.csproj reference
+      src/ProyectoHorario.Core/ProyectoHorario.Core.csproj
+      src/ProyectoHorario.Infrastructure/ProyectoHorario.Infrastructure.csproj
+
+  dotnet add src/ProyectoHorario.Infrastructure/ProyectoHorario.Infrastructure.csproj reference
+      src/ProyectoHorario.Core/ProyectoHorario.Core.csproj
+
+================================================================================
+6. FRONTEND — VUE 3
+================================================================================
+
+El frontend es una aplicacion completamente independiente del backend.
+Se comunica con la API a traves de peticiones HTTP.
+
+Vite es la herramienta de construccion usada (mas rapida que el antiguo Vue CLI
+y el estandar actual para proyectos Vue).
+
+CREAR EL PROYECTO
+-----------------
+  cd src/ProyectoHorario.Client
+  npm create vite@latest . -- --template vue-ts   <- Crea el proyecto con TypeScript
+  npm install                                      <- Instala las dependencias
+
+INSTALAR DEPENDENCIAS ADICIONALES
+----------------------------------
+  npm install vue-router@4 pinia
+
+  vue-router : Gestiona la navegacion entre paginas de la aplicacion
+  pinia      : Gestiona el estado global (datos compartidos entre componentes)
+
+================================================================================
+7. ENTITY FRAMEWORK CORE Y SQL SERVER
+================================================================================
+
+Entity Framework Core (EF Core) es el ORM que permite interactuar con SQL Server
+desde C# usando clases en lugar de escribir SQL directamente.
+
+INSTALAR PAQUETES NUGET
+-----------------------
+  dotnet add src/ProyectoHorario.Infrastructure/... package Microsoft.EntityFrameworkCore
+  dotnet add src/ProyectoHorario.Infrastructure/... package Microsoft.EntityFrameworkCore.SqlServer
+  dotnet add src/ProyectoHorario.Infrastructure/... package Microsoft.EntityFrameworkCore.Design
+  dotnet add src/ProyectoHorario.API/...            package Microsoft.EntityFrameworkCore.Design
+
+DATOS DE CONEXION A LA BASE DE DATOS
+--------------------------------------
+  Servidor      : PMADJC1124
+  Base de datos : ProyectoHorarios
+  Autenticacion : SQL Server Authentication
+  Usuario       : desarrollo
+
+  IMPORTANTE: En produccion nunca escribir credenciales en appsettings.json.
+  Usar variables de entorno o Azure Key Vault.
+
+CADENA DE CONEXION (appsettings.json)
+--------------------------------------
+  "ConnectionStrings": {
+    "DefaultConnection": "Server=PMADJC1124;Database=ProyectoHorarios;
+                          User Id=desarrollo;Password=desarrollo;
+                          TrustServerCertificate=True;"
+  }
+
+REGISTRO DEL DBCONTEXT EN LA API (Program.cs)
+----------------------------------------------
+  builder.Services.AddDbContext<AppDbContext>(options =>
+      options.UseSqlServer(
+          builder.Configuration.GetConnectionString("DefaultConnection")));
+
+COMANDOS DE MIGRACIONES (para cuando se añadan entidades)
+----------------------------------------------------------
+  Las migraciones describen los cambios en la estructura de la base de datos.
+  Cada vez que se añade o modifica una entidad, hay que crear una migracion.
+
+  Instalar herramienta global (solo la primera vez):
+    dotnet tool install --global dotnet-ef
+
+  Crear una nueva migracion:
+    dotnet ef migrations add NombreDeLaMigracion
+        --project src/ProyectoHorario.Infrastructure
+        --startup-project src/ProyectoHorario.API
+
+  Aplicar las migraciones a la base de datos:
+    dotnet ef database update
+        --project src/ProyectoHorario.Infrastructure
+        --startup-project src/ProyectoHorario.API
+
+================================================================================
+8. VERIFICACION FINAL
+================================================================================
+
+Una vez completados todos los pasos, ejecuta estos comandos para confirmar
+que todo funciona correctamente.
+
+  dotnet build                                <- Compila toda la solucion (debe dar 0 errores)
+  dotnet run --project src/ProyectoHorario.API    <- Arranca la API (https://localhost:7xxx)
+
+  cd src/ProyectoHorario.Client
+  npm run dev                                 <- Arranca el frontend (http://localhost:5173)
+
+================================================================================
